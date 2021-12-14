@@ -1,7 +1,6 @@
 // @ts-nocheck
 import * as BABYLON from 'babylonjs';
-import { Mesh } from 'babylonjs';
-import { blurPixelShader } from 'babylonjs/Shaders/blur.fragment';
+import { Mesh, RotationGizmo } from 'babylonjs';
 import { EditControl } from './control';
 import im from './mBBxGJH.jpeg';
 
@@ -30,50 +29,15 @@ export const main = function () {
   mat.alpha = 0;
   // Create utility layer the gizmo will be rendered on
   var utilLayer = new BABYLON.UtilityLayerRenderer(scene);
-
-  // Create the gizmo and attach to the sphere
-  var gizmo = new BABYLON.PositionGizmo(utilLayer);
-  gizmo.attachedMesh = box;
-  var dragobserver = new BABYLON.PointerDragBehavior();
-  dragobserver.onDragObservable.add((event) => {
-    console.log('drag');
-    console.log(event);
-  });
-
-  // Keep the gizmo fixed to world rotation
-  gizmo.updateGizmoRotationToMatchAttachedMesh = true;
-  gizmo.updateGizmoPositionToMatchAttachedMesh = true;
-  gizmo.onDragStartObservable.add((...args: any[]) => {
-    console.log('onDragStartObservable', args);
-    console.log(
-      'onDragStartObservable',
-      gizmo.xGizmo.dragBehavior.lastDragPosition,
-      gizmo.yGizmo.dragBehavior.lastDragPosition,
-      gizmo.zGizmo.dragBehavior.lastDragPosition
-    );
-  });
-  gizmo.onDragEndObservable.add((...args: any[]) => {
-    console.log('onDragEndObservable', args);
-    console.log(
-      'onDragStartObservable',
-      gizmo.xGizmo.dragBehavior.lastDragPosition,
-      gizmo.yGizmo.dragBehavior.lastDragPosition,
-      gizmo.zGizmo.dragBehavior.lastDragPosition
-    );
-  });
-
-  gizmo.xGizmo.dragBehavior.onDragObservable.add((...args: any[]) => {
-    console.log('X: gizmo.xGizmo.dragBehavior.onDragObservable', args);
-  });
-
-  gizmo.zGizmo.dragBehavior.onDragObservable.add((...args: any[]) => {
-    console.log('Z: gizmo.zGizmo.dragBehavior.onDragObservable', args);
-  });
-
-  gizmo.yGizmo.dragBehavior.onDragObservable.add((...args: any[]) => {
-    console.log('Y: gizmo.yGizmo.dragBehavior.onDragObservable', args);
-  });
-
+  
+  var gizmoManager = new BABYLON.GizmoManager(scene);
+  gizmoManager.positionGizmoEnabled = true;
+  gizmoManager.rotationGizmoEnabled = true;
+  gizmoManager.scaleGizmoEnabled = false;
+  gizmoManager.boundingBoxGizmoEnabled = false;
+  // gizmoManager.attachableMeshes = [box];
+  gizmoManager.usePointerToAttachGizmos = false;
+  gizmoManager.attachToMesh(box);
   engine.runRenderLoop(function () {
     scene.render();
   });
