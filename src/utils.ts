@@ -3,6 +3,7 @@ import * as BABYLON from 'babylonjs';
 import { Mesh, RotationGizmo } from 'babylonjs';
 import { EditControl } from './control';
 import im from './mBBxGJH.jpeg';
+import { default as OrientationGizmo } from './OrientationGizmo';
 
 export const main = function () {
   let canvas: HTMLCanvasElement = <HTMLCanvasElement>(
@@ -12,6 +13,7 @@ export const main = function () {
 
   let scene = addScene(engine);
   let camera = addCamera(scene, canvas);
+  let orientation = new OrientationGizmo(camera);
   // let grid = addGrid(scene);
   //   let box = addBox(scene);
   // let editControl = addEditControl(box, camera, canvas)
@@ -28,15 +30,14 @@ export const main = function () {
   box.position = new BABYLON.Vector3(0, 0, 0);
   mat.alpha = 0;
   // Create utility layer the gizmo will be rendered on
-  var utilLayer = new BABYLON.UtilityLayerRenderer(scene);
-  
-  var gizmoManager = new BABYLON.GizmoManager(scene);
+  const utilLayer = new BABYLON.UtilityLayerRenderer(scene);
+  const gizmoManager = new BABYLON.GizmoManager(scene);
   gizmoManager.positionGizmoEnabled = true;
   gizmoManager.rotationGizmoEnabled = true;
-  gizmoManager.scaleGizmoEnabled = false;
-  gizmoManager.boundingBoxGizmoEnabled = false;
+  gizmoManager.scaleGizmoEnabled = true;
+  gizmoManager.boundingBoxGizmoEnabled = true;
   // gizmoManager.attachableMeshes = [box];
-  gizmoManager.usePointerToAttachGizmos = false;
+  gizmoManager.usePointerToAttachGizmos = true;
   gizmoManager.attachToMesh(box);
   engine.runRenderLoop(function () {
     scene.render();
@@ -49,6 +50,7 @@ export const main = function () {
     engine,
     scene,
     layer,
+    orientation
   };
 };
 

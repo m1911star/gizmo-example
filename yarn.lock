@@ -10522,6 +10522,11 @@ text-table@0.2.0, text-table@^0.2.0:
   resolved "https://registry.npm.taobao.org/text-table/download/text-table-0.2.0.tgz#7f5ee823ae805207c00af2df4a84ec3fcfa570b4"
   integrity sha1-f17oI66AUgfACvLfSoTsP8+lcLQ=
 
+three@^0.138.3:
+  version "0.138.3"
+  resolved "https://registry.npmmirror.com/three/-/three-0.138.3.tgz#7be5153d79dcbf9e9baad82e7faf8c29edda4ed0"
+  integrity sha512-4t1cKC8gimNyJChJbaklg8W/qj3PpsLJUIFm5LIuAy/hVxxNm1ru2FGTSfbTSsuHmC/7ipsyuGKqrSAKLNtkzg==
+
 throat@^5.0.0:
   version "5.0.0"
   resolved "https://registry.nlark.com/throat/download/throat-5.0.0.tgz#c5199235803aad18754a667d659b5e72ce16764b"

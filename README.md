@@ -2,5 +2,7 @@
 
 ![H](./screenshot/img.png)
 
-- [ ] 剥离坐标计算逻辑
-- [ ] 剥离渲染逻辑
+- [x] mock basic gizmo
+- [x] mock basic control helper
+- [ ] interact with helper
+- [ ] implement react component
