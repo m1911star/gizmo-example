@@ -1,9 +1,7 @@
 // @ts-nocheck
 import * as BABYLON from 'babylonjs';
-import { Mesh, RotationGizmo } from 'babylonjs';
-import { EditControl } from './control';
 import im from './mBBxGJH.jpeg';
-import { default as OrientationGizmo } from './OrientationGizmo';
+import OrientationGizmo from './control';
 
 export const main = function () {
   let canvas: HTMLCanvasElement = <HTMLCanvasElement>(
@@ -13,25 +11,52 @@ export const main = function () {
 
   let scene = addScene(engine);
   let camera = addCamera(scene, canvas);
-  let orientation = new OrientationGizmo(camera);
-  // let grid = addGrid(scene);
-  //   let box = addBox(scene);
-  // let editControl = addEditControl(box, camera, canvas)
-  var layer = new BABYLON.Layer('', im, scene, true);
+  scene.activeCamera = camera;
+  let freeCamera = new BABYLON.FreeCamera(
+    'FreeCamera',
+    new BABYLON.Vector3(0, 0, -10),
+    scene
+  );
+  freeCamera.rotationQuaternion = BABYLON.Quaternion.Identity();
 
-  let mat = new BABYLON.StandardMaterial('mat', scene);
-  mat.diffuseColor = new BABYLON.Color3(0, 0, 0);
-  let box = BABYLON.MeshBuilder.CreateBox('', {
-    height: 0,
-    width: 0,
+  // This creates a light, aiming 0,1,0 - to the sky (non-mesh)
+  let light = new BABYLON.HemisphericLight(
+    'light',
+    new BABYLON.Vector3(0, 1, 0),
+    scene
+  );
+
+  // Default intensity is 1. Let's dim the light a small amount
+  light.intensity = 0.7;
+  let transform = [
+    {
+      position: freeCamera.position,
+      rotationQuaternion: freeCamera.rotationQuaternion,
+    },
+    {
+      position: freeCamera.position,
+      rotationQuaternion: freeCamera.rotationQuaternion,
+    },
+    {
+      position: freeCamera.position,
+      rotationQuaternion: freeCamera.rotationQuaternion,
+    },
+  ];
+
+  let layer = new BABYLON.Layer('', im, scene, true);
+
+  let box = BABYLON.MeshBuilder.CreateBox('box', {
+    height: 10,
+    width: 10,
     depth: 0,
   });
-  box.material = mat;
+  box.isPickable = true;
   box.position = new BABYLON.Vector3(0, 0, 0);
-  mat.alpha = 0;
+  // mat.alpha = 0;
   // Create utility layer the gizmo will be rendered on
-  const utilLayer = new BABYLON.UtilityLayerRenderer(scene);
-  const gizmoManager = new BABYLON.GizmoManager(scene);
+  var utilLayer = new BABYLON.UtilityLayerRenderer(scene);
+
+  var gizmoManager = new BABYLON.GizmoManager(scene);
   gizmoManager.positionGizmoEnabled = true;
   gizmoManager.rotationGizmoEnabled = true;
   gizmoManager.scaleGizmoEnabled = true;
@@ -39,6 +64,29 @@ export const main = function () {
   // gizmoManager.attachableMeshes = [box];
   gizmoManager.usePointerToAttachGizmos = true;
   gizmoManager.attachToMesh(box);
+
+  var cameraGizmo = new BABYLON.CameraGizmo();
+  cameraGizmo.camera = freeCamera;
+  cameraGizmo.attachedNode.position = freeCamera.position;
+  cameraGizmo.attachedNode.rotationQuaternion = freeCamera.rotationQuaternion;
+  cameraGizmo.onClickedObservable.add((_camera) => {
+    gizmoManager.attachToNode(_camera);
+  });
+  let currentSnapshotIndex = 0;
+  if (gizmoManager.gizmos.positionGizmo) {
+    gizmoManager.gizmos.positionGizmo.onDragEndObservable.add(() => {
+      transform[currentSnapshotIndex].position = freeCamera.position.clone();
+    });
+  }
+
+  if (gizmoManager.gizmos.rotationGizmo) {
+    gizmoManager.gizmos.rotationGizmo.onDragEndObservable.add(() => {
+      transform[currentSnapshotIndex].rotationQuaternion =
+        BABYLON.Quaternion.FromRotationMatrix(
+          freeCamera.getWorldMatrix()
+        ).clone();
+    });
+  }
   engine.runRenderLoop(function () {
     scene.render();
   });
@@ -50,7 +98,7 @@ export const main = function () {
     engine,
     scene,
     layer,
-    orientation
+    helper: new OrientationGizmo(camera),
   };
 };
 
@@ -103,46 +151,4 @@ let addBox = function (scene: BABYLON.Scene) {
 
   mat.alpha = 0;
   return box;
-};
-
-let addEditControl = function (
-  mesh: Mesh,
-  camera: BABYLON.Camera,
-  canvas: HTMLCanvasElement
-) {
-  //if we are planning on doing rotation in quaternion then make sure the rotationQuaternion is atleast initialized
-  //else edit control will throw following exception
-  //"Eulerian is set to false but the mesh's rotationQuaternion is not set."
-  mesh.rotationQuaternion = BABYLON.Quaternion.Identity();
-
-  //create edit control (mesh to attach to,camera, canvas, scale of editcontrol, if doing rotation in euler)
-  let ec: EditControl = new EditControl(
-    mesh,
-    camera,
-    canvas,
-    0.75,
-    false,
-    0.02
-  );
-
-  //show translation controls
-  ec.enableTranslation();
-
-  return ec;
-};
-
-let setButtons = function (editControl: EditControl) {
-  let transButton = document.getElementById('trans');
-  let rotButton = document.getElementById('rotate');
-  let scaleButton = document.getElementById('scale');
-
-  transButton!.onclick = function () {
-    editControl.enableTranslation();
-  };
-  rotButton!.onclick = function () {
-    editControl.enableRotation();
-  };
-  scaleButton!.onclick = function () {
-    editControl.enableScaling();
-  };
 };
