@@ -60,17 +60,16 @@ export const main = function () {
   gizmoManager.positionGizmoEnabled = true;
   gizmoManager.rotationGizmoEnabled = true;
   gizmoManager.scaleGizmoEnabled = true;
-  gizmoManager.boundingBoxGizmoEnabled = true;
-  // gizmoManager.attachableMeshes = [box];
+  gizmoManager.boundingBoxGizmoEnabled = false;
   gizmoManager.usePointerToAttachGizmos = true;
-  gizmoManager.attachToMesh(box);
+  gizmoManager.attachToNode(box);
 
   var cameraGizmo = new BABYLON.CameraGizmo();
   cameraGizmo.camera = freeCamera;
   cameraGizmo.attachedNode.position = freeCamera.position;
   cameraGizmo.attachedNode.rotationQuaternion = freeCamera.rotationQuaternion;
   cameraGizmo.onClickedObservable.add((_camera) => {
-    gizmoManager.attachToNode(_camera);
+    gizmoManager.attachToNode(cameraGizmo.attachedNode);
   });
   let currentSnapshotIndex = 0;
   if (gizmoManager.gizmos.positionGizmo) {

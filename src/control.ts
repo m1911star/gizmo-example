@@ -1,6 +1,5 @@
 // @ts-nocheck
 import * as BABYLON from 'babylonjs';
-import * as THREE from 'three';
 
 export class OrientationGizmo extends HTMLElement {
   options: any;
@@ -37,7 +36,7 @@ export class OrientationGizmo extends HTMLElement {
     this.bubbles = [
       {
         axis: 'x',
-        direction: new THREE.Vector3(1, 0, 0),
+        direction: new BABYLON.Vector3(1, 0, 0),
         size: this.options.bubbleSizePrimary,
         color: this.options.colors.x,
         line: this.options.lineWidth,
@@ -45,7 +44,7 @@ export class OrientationGizmo extends HTMLElement {
       },
       {
         axis: 'y',
-        direction: new THREE.Vector3(0, 1, 0),
+        direction: new BABYLON.Vector3(0, 1, 0),
         size: this.options.bubbleSizePrimary,
         color: this.options.colors.y,
         line: this.options.lineWidth,
@@ -53,7 +52,7 @@ export class OrientationGizmo extends HTMLElement {
       },
       {
         axis: 'z',
-        direction: new THREE.Vector3(0, 0, 1),
+        direction: new BABYLON.Vector3(0, 0, 1),
         size: this.options.bubbleSizePrimary,
         color: this.options.colors.z,
         line: this.options.lineWidth,
@@ -61,25 +60,25 @@ export class OrientationGizmo extends HTMLElement {
       },
       {
         axis: '-x',
-        direction: new THREE.Vector3(-1, 0, 0),
+        direction: new BABYLON.Vector3(-1, 0, 0),
         size: this.options.bubbleSizeSeconday,
         color: this.options.colors.x,
       },
       {
         axis: '-y',
-        direction: new THREE.Vector3(0, -1, 0),
+        direction: new BABYLON.Vector3(0, -1, 0),
         size: this.options.bubbleSizeSeconday,
         color: this.options.colors.y,
       },
       {
         axis: '-z',
-        direction: new THREE.Vector3(0, 0, -1),
+        direction: new BABYLON.Vector3(0, 0, -1),
         size: this.options.bubbleSizeSeconday,
         color: this.options.colors.z,
       },
     ];
 
-    this.center = new THREE.Vector3(
+    this.center = new BABYLON.Vector3(
       this.options.size / 2,
       this.options.size / 2,
       0
@@ -116,7 +115,7 @@ export class OrientationGizmo extends HTMLElement {
 
   onMouseMove(evt) {
     const rect = this.canvas.getBoundingClientRect();
-    this.mouse = new THREE.Vector3(
+    this.mouse = new BABYLON.Vector3(
       evt.clientX - rect.left,
       evt.clientY - rect.top,
       0
@@ -160,17 +159,9 @@ export class OrientationGizmo extends HTMLElement {
 
   update() {
     this.clear();
-
-    // Calculate the rotation matrix from the camera
-    let rotMat = new THREE.Matrix4().makeRotationFromEuler(
-      this.camera.absoluteRotation.toEulerAngles()
-    );
-    // this.camera.absoluteRotation.toEulerAngles()
-    let invRotMat = rotMat.clone().invert();
-
-    for (var bubble of this.bubbles) {
+    for (const bubble of this.bubbles) {
       bubble.position = this.getBubblePosition(
-        bubble.direction.clone().applyMatrix4(invRotMat)
+          (bubble.direction.clone() as BABYLON.Vector3)
       );
     }
 
@@ -194,7 +185,7 @@ export class OrientationGizmo extends HTMLElement {
 
       // Loop through each layer
       for (var bubble of layers) {
-        const distance = this.mouse.distanceTo(bubble.position);
+        const distance = BABYLON.Vector3.Distance(this.mouse, bubble.position);
 
         // Only select the axis if its closer to the mouse than the previous or if its within its bubble circle
         if (distance < closestDist || distance < bubble.size) {
@@ -250,7 +241,7 @@ export class OrientationGizmo extends HTMLElement {
   }
 
   getBubblePosition(position) {
-    return new THREE.Vector3(
+    return new BABYLON.Vector3(
       position.x *
         (this.center.x -
           this.options.bubbleSizePrimary / 2 -
