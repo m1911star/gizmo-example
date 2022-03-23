@@ -112,7 +112,6 @@ export class OrientationGizmo {
 
   onMouseMove = (evt) => {
     const rect = this.canvas.getBoundingClientRect();
-    console.log(this);
     debugger;
     this.mouse = new BABYLON.Vector3(
       evt.clientX - rect.left,

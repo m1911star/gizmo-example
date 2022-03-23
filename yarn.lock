@@ -1211,6 +1211,14 @@
     "@babylonjs/core" "4.2.2"
     tslib ">=1.10.0"
 
+"@babylonjs/materials@^4.2.2":
+  version "4.2.2"
+  resolved "https://registry.npmmirror.com/@babylonjs/materials/-/materials-4.2.2.tgz#3ad9e5aea9a5883785edc0bea9a88cdf25b448ee"
+  integrity sha512-Y7umjVEYV5ZsLYVxgrkb5+4lPsz35acgOEqiZErFBdGXJw3AHJLJmalcmL5WXqUBR2SzyShFLCJOdbFQbkmaxg==
+  dependencies:
+    "@babylonjs/core" "4.2.2"
+    tslib ">=1.10.0"
+
 "@bcoe/v8-coverage@^0.2.3":
   version "0.2.3"
   resolved "https://registry.npm.taobao.org/@bcoe/v8-coverage/download/@bcoe/v8-coverage-0.2.3.tgz#75a2e8b51cb758a7553d6804a5932d7aace75c39"
