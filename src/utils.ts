@@ -3,11 +3,8 @@ import * as BABYLON from '@babylonjs/core';
 import OrientationGizmo from './control';
 
 export const main = function () {
-  let canvas: HTMLCanvasElement = <HTMLCanvasElement>(
-    document.getElementById('renderCanvas')
-  );
+  let canvas: HTMLCanvasElement = document.getElementById('renderCanvas') as HTMLCanvasElement;
   let engine = new BABYLON.Engine(canvas, true);
-
   let scene = addScene(engine);
   let camera = addCamera(scene, canvas);
   scene.activeCamera = camera;

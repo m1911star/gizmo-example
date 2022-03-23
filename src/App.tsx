@@ -10,6 +10,9 @@ function App() {
       helper.update();
     }
     animate();
+    return () => {
+      helper.destroy();
+    }
   }, []);
   const width = window.innerWidth;
   const height = window.innerHeight;

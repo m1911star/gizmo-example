@@ -30,7 +30,7 @@ export class OrientationGizmo {
     );
 
     // Function called when axis is clicked
-    this.onAxisSelected = null;
+    this.onAxisSelected = this.options.onAxisSelected;
 
     // Generate list of axes
     this.bubbles = [
@@ -95,18 +95,25 @@ export class OrientationGizmo {
     this.canvas.addEventListener('mousemove', this.onMouseMove, false);
     this.canvas.addEventListener('mouseout', this.onMouseOut, false);
     this.canvas.addEventListener('click', this.onMouseClick, false);
-    this.onMouseMove = this.onMouseMove.bind(this);
-    this.onMouseOut = this.onMouseOut.bind(this);
-    this.onMouseClick = this.onMouseClick.bind(this);
+    // this.onMouseMove = this.onMouseMove.bind(this);
+    // this.onMouseOut = this.onMouseOut.bind(this);
+    // this.onMouseClick = this.onMouseClick.bind(this);
   }
   disconnectedCallback() {
     this.canvas.removeEventListener('mousemove', this.onMouseMove, false);
     this.canvas.removeEventListener('mouseout', this.onMouseOut, false);
     this.canvas.removeEventListener('click', this.onMouseClick, false);
   }
+  
+  destroy() {
+    this.clear();
+    this.disconnectedCallback();
+  }
 
-  onMouseMove(evt) {
+  onMouseMove = (evt) => {
     const rect = this.canvas.getBoundingClientRect();
+    console.log(this);
+    debugger;
     this.mouse = new BABYLON.Vector3(
       evt.clientX - rect.left,
       evt.clientY - rect.top,
@@ -114,11 +121,11 @@ export class OrientationGizmo {
     );
   }
 
-  onMouseOut(evt) {
+  onMouseOut = (evt) => {
     this.mouse = null;
   }
 
-  onMouseClick(evt) {
+  onMouseClick = (evt) => {
     if (!!this.onAxisSelected && typeof this.onAxisSelected == 'function') {
       this.onAxisSelected({
         axis: this.selectedAxis.axis,
