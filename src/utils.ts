@@ -1,7 +1,6 @@
 // @ts-nocheck
-import * as BABYLON  from 'babylonjs';
+import * as BABYLON from '@babylonjs/core';
 import OrientationGizmo from './control';
-import { BoundingBoxGizmo as CustomBounding } from './gizmos/bounding';
 
 export const main = function () {
   let canvas: HTMLCanvasElement = <HTMLCanvasElement>(
@@ -28,66 +27,10 @@ export const main = function () {
 
   // Default intensity is 1. Let's dim the light a small amount
   light.intensity = 0.7;
-  // let transform = [
-  //   {
-  //     position: freeCamera.position,
-  //     rotationQuaternion: freeCamera.rotationQuaternion,
-  //   },
-  //   {
-  //     position: freeCamera.position,
-  //     rotationQuaternion: freeCamera.rotationQuaternion,
-  //   },
-  //   {
-  //     position: freeCamera.position,
-  //     rotationQuaternion: freeCamera.rotationQuaternion,
-  //   },
-  // ];
-  //
-  // let layer = new BABYLON.Layer('', im, scene, true);
-  //
-  // let box = BABYLON.MeshBuilder.CreateBox('box', {
-  //   height: 10,
-  //   width: 10,
-  //   depth: 0,
-  // });
-  // box.isPickable = true;
-  // box.position = new BABYLON.Vector3(0, 0, 0);
-  // mat.alpha = 0;
-  // Create utility layer the gizmo will be rendered on
   var utilLayer = new BABYLON.UtilityLayerRenderer(scene);
 
-  // var gizmoManager = new BABYLON.GizmoManager(scene);
-  // gizmoManager.positionGizmoEnabled = true;
-  // gizmoManager.rotationGizmoEnabled = true;
-  // gizmoManager.scaleGizmoEnabled = true;
-  // gizmoManager.boundingBoxGizmoEnabled = true;
-  // gizmoManager.usePointerToAttachGizmos = true;
-  // gizmoManager.attachToNode(box);
-  //
-  // var cameraGizmo = new BABYLON.CameraGizmo();
-  // cameraGizmo.camera = freeCamera;
-  // cameraGizmo.attachedNode.position = freeCamera.position;
-  // cameraGizmo.attachedNode.rotationQuaternion = freeCamera.rotationQuaternion;
-  // cameraGizmo.onClickedObservable.add((_camera) => {
-  //   gizmoManager.attachToNode(cameraGizmo.attachedNode);
-  // });
-  // let currentSnapshotIndex = 0;
-  // if (gizmoManager.gizmos.positionGizmo) {
-  //   gizmoManager.gizmos.positionGizmo.onDragEndObservable.add(() => {
-  //     transform[currentSnapshotIndex].position = freeCamera.position.clone();
-  //   });
-  // }
-  
   addBox(scene);
 
-  // if (gizmoManager.gizmos.rotationGizmo) {
-  //   gizmoManager.gizmos.rotationGizmo.onDragEndObservable.add(() => {
-  //     transform[currentSnapshotIndex].rotationQuaternion =
-  //       BABYLON.Quaternion.FromRotationMatrix(
-  //         freeCamera.getWorldMatrix()
-  //       ).clone();
-  //   });
-  // }
   engine.runRenderLoop(function () {
     scene.render();
   });
@@ -120,7 +63,7 @@ let addCamera = function (scene: BABYLON.Scene, canvas: HTMLCanvasElement) {
     'ArcRotateCamera',
     Math.PI / 4,
     Math.PI / 4,
-    20,
+    100,
     new BABYLON.Vector3(0, 0, 0),
     scene
   );
@@ -128,13 +71,6 @@ let addCamera = function (scene: BABYLON.Scene, canvas: HTMLCanvasElement) {
   camera.setTarget(BABYLON.Vector3.Zero());
   camera.attachControl(canvas, false);
   return camera;
-};
-
-let addGrid = function (scene: BABYLON.Scene) {
-  let ground = BABYLON.Mesh.CreateGround('ground1', 20, 20, 10, scene);
-  let gridMaterial = new BABYLON.StandardMaterial('Grid Material', scene);
-  gridMaterial.wireframe = true;
-  ground.material = gridMaterial;
 };
 
 let addBox = function (scene: BABYLON.Scene) {
@@ -147,7 +83,7 @@ let addBox = function (scene: BABYLON.Scene) {
     depth: 2,
   });
   box.material = mat;
-  box.position = new BABYLON.Vector3(0, 1, 0);
+  box.position = new BABYLON.Vector3(0, 0, 0);
 
   box.isPickable = true;
   box.actionManager = new BABYLON.ActionManager(scene);
@@ -158,8 +94,6 @@ let addBox = function (scene: BABYLON.Scene) {
       console.log(evt.source);
     }
   ));
-  const gizmo = new CustomBounding();
-  gizmo.attachedMesh = box;
   mat.alpha = 0;
   return box;
 };

@@ -4,7 +4,7 @@ import { main } from './utils';
 function App() {
   React.useLayoutEffect(() => {
     const { helper } = main();
-    document.getElementById('helper')?.appendChild(helper);
+    document.getElementById('helper')?.appendChild(helper.canvas);
     function animate() {
       requestAnimationFrame(animate);
       helper.update();

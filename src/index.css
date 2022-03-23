@@ -17,7 +17,7 @@ canvas {
   display: block;
 }
 
-orientation-gizmo {
+.bjs-gizmo {
   position: absolute;
   top: 20px;
   left: 20px;

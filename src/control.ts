@@ -1,11 +1,11 @@
 // @ts-nocheck
-import * as BABYLON from 'babylonjs';
+import * as BABYLON from '@babylonjs/core';
 
-export class OrientationGizmo extends HTMLElement {
+export class OrientationGizmo {
   options: any;
   camera: BABYLON.Camera;
+  canvas: HTMLCanvasElement;
   constructor(camera: BABYLON.Camera, options: any) {
-    super();
     this.camera = camera;
     this.options = Object.assign(
       {
@@ -86,27 +86,19 @@ export class OrientationGizmo extends HTMLElement {
     this.selectedAxis = null;
 
     // All we need is a canvas
-    this.innerHTML =
-      "<canvas width='" +
-      this.options.size +
-      "' height='" +
-      this.options.size +
-      "'></canvas>";
-
+    this.canvas = document.createElement('canvas') as HTMLCanvasElement;
+    this.canvas.className = 'bjs-gizmo';
+    this.canvas.width = this.options.size;
+    this.canvas.height = this.options.size;
+    this.context = this.canvas.getContext('2d');
+  
+    this.canvas.addEventListener('mousemove', this.onMouseMove, false);
+    this.canvas.addEventListener('mouseout', this.onMouseOut, false);
+    this.canvas.addEventListener('click', this.onMouseClick, false);
     this.onMouseMove = this.onMouseMove.bind(this);
     this.onMouseOut = this.onMouseOut.bind(this);
     this.onMouseClick = this.onMouseClick.bind(this);
   }
-
-  connectedCallback() {
-    this.canvas = this.querySelector('canvas');
-    this.context = this.canvas.getContext('2d');
-
-    this.canvas.addEventListener('mousemove', this.onMouseMove, false);
-    this.canvas.addEventListener('mouseout', this.onMouseOut, false);
-    this.canvas.addEventListener('click', this.onMouseClick, false);
-  }
-
   disconnectedCallback() {
     this.canvas.removeEventListener('mousemove', this.onMouseMove, false);
     this.canvas.removeEventListener('mouseout', this.onMouseOut, false);
@@ -159,9 +151,12 @@ export class OrientationGizmo extends HTMLElement {
 
   update() {
     this.clear();
+    const q = this.camera.absoluteRotation.clone();
+    const rp = new BABYLON.Quaternion(q.x, q.y, q.z, -q.w);
     for (const bubble of this.bubbles) {
+      const vec = (bubble.direction.clone() as BABYLON.Vector3);
       bubble.position = this.getBubblePosition(
-          (bubble.direction.clone() as BABYLON.Vector3)
+          vec.rotateByQuaternionToRef(rp, vec),
       );
     }
 
@@ -256,7 +251,5 @@ export class OrientationGizmo extends HTMLElement {
     );
   }
 }
-
-window.customElements.define('orientation-gizmo', OrientationGizmo);
 
 export default OrientationGizmo;
